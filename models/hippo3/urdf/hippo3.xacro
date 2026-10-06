@@ -6,12 +6,14 @@
     <xacro:include filename="$(find hippo_sim)/models/hippo3/urdf/clamp_macro.xacro" />
     <xacro:include filename="$(find hippo_sim)/models/hippo3/urdf/mount_macro.xacro" />
     <xacro:include filename="$(find hippo_sim)/models/camera/urdf/camera_macro.xacro" />
+    <xacro:include filename="$(find hippo_sim)/models/camera/urdf/rgbd_camera_macro.xacro" />
     <xacro:include filename="$(find hippo_sim)/models/acoustic_modem/urdf/acoustic_modem_macro.xacro" />
 
     <xacro:property name="thruster_xy" value="${thruster_r / 2**0.5}" />
     <gazebo>
         <static>false</static>
     </gazebo>
+    
     <link name="base_link">
         <inertial>
             <mass value="${base_mass}" />
@@ -23,6 +25,7 @@
             </geometry>
         </visual>
     </link>
+    
 
     <link name="flange_link">
         <inertial>
@@ -40,6 +43,7 @@
         <child link="flange_link" />
     </joint>
 
+    
     <link name="dome_link">
         <inertial>
             <mass value="1e-5" />
@@ -55,14 +59,16 @@
         <parent link="base_link" />
         <child link="dome_link" />
     </joint>
+    
 
     <gazebo reference="flange_joint">
         <preserveFixedJoint>true</preserveFixedJoint>
     </gazebo>
-
+    
     <gazebo reference="dome_joint">
         <preserveFixedJoint>true</preserveFixedJoint>
     </gazebo>
+
 
     <xacro:clamp parent="base_link" suffix="clamp_lower" xyz="0 0 0" rpy="${radians(90)} 0 0" />
     <xacro:clamp parent="base_link" suffix="clamp_upper" xyz="0 0 0" rpy="${radians(-90)} 0 0" />
@@ -81,7 +87,7 @@
             </material>
         </visual>
     </gazebo>
-
+    
     <gazebo reference="flange_link">
         <visual>
             <material>
@@ -99,7 +105,7 @@
             </material>
         </visual>
     </gazebo>
-
+    
     <gazebo reference="dome_link">
         <visual>
             <material>
@@ -109,6 +115,7 @@
             </material>
         </visual>
     </gazebo>
+
 
     <xacro:thruster parent="base_link" suffix="port_top" xyz="0 ${thruster_r / 2**0.5} ${thruster_r / 2**0.5}" rpy="0 0 0" turning_direction="ccw" propeller_direction="ccw" color="red" number="0" />
     <xacro:thruster parent="base_link" suffix="starboard_top" xyz="0 -${thruster_r / 2**0.5} ${thruster_r / 2**0.5}" rpy="0 0 0" turning_direction="ccw" propeller_direction="cw" color="green" number="1" />
@@ -125,6 +132,13 @@
             prefix="vertical_camera" topic_prefix="$(arg vehicle_name)/vertical_camera"
             ignition_frame_id="$(arg vehicle_name)::vertical_camera"
             xyz="${vertical_camera_position}" rpy="${vertical_camera_orientation}" />
+    </xacro:if>
+
+    <xacro:if value="$(arg use_rgbd_camera)">
+        <xacro:rgbd_camera_macro parent="base_link"
+            prefix="rgbd_camera" topic_prefix="$(arg vehicle_name)/rgbd_camera"
+            ignition_frame_id="$(arg vehicle_name)::rgbd_camera"
+            xyz="${rgbd_camera_position}" rpy="${rgbd_camera_orientation}" />
     </xacro:if>
 
     <xacro:if value="$(arg use_acoustic_modem)">

@@ -16,6 +16,10 @@
     <xacro:property name="vertical_camera_position" value="0.15 0.0 -0.03" />
     <xacro:property name="vertical_camera_orientation" value="0 ${radians(90)} 0" />
 
+    <xacro:arg name="use_rgbd_camera" default="false" />
+    <xacro:property name="rgbd_camera_position" value="0.2 0.0 0.0" />
+    <xacro:property name="rgbd_camera_orientation" value="0 0 0" />
+
     <xacro:arg name="use_acoustic_modem" default="false" />
     <xacro:property name="modem_position" value="0 0 -0.1" />
     <xacro:property name="modem_orientation" value="0 0 0" />

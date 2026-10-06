@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="rgbd_width" value="50" />
+    <xacro:property name="rgbd_height" value="1" />
+    <xacro:property name="rgbd_fps" value="10" />
+    <xacro:property name="rgbd_horizontal_fov" value="1.57" />
+    <xacro:property name="rgbd_near" value="0.1" />
+    <xacro:property name="rgbd_far" value="10" />
+</robot>

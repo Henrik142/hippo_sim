@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="rgbd_camera_macro" params="prefix parent topic_prefix ignition_frame_id xyz rpy">
+        <xacro:include filename="$(find hippo_sim)/models/common/urdf/common.xacro" />
+        <xacro:include filename="$(find hippo_sim)/models/camera/urdf/rgbd_camera_params.xacro" />
+        <xacro:property name="link" value="${prefix}_link" />
+        <xacro:property name="joint" value="${prefix}_joint" />
+
+        <link name="${link}">
+            <xacro:zero_inertia />
+            <visual>
+                <origin rpy="0 0 0" />
+                <geometry>
+                    <cylinder radius="0.01" length="0.01" />
+                </geometry>
+            </visual>
+        </link>
+
+        <joint name="${joint}" type="fixed">
+            <origin xyz="${xyz}" rpy="${rpy}" />
+            <parent link="${parent}" />
+            <child link="${link}" />
+        </joint>
+        <gazebo reference="${joint}">
+            <disableFixedJointLumping>true</disableFixedJointLumping>
+            <preserveFixedJoint>true</preserveFixedJoint>
+        </gazebo>
+
+        <gazebo reference="${link}">
+            <visual>
+                <material>
+                    <ambient>0.5 0.25 1 1</ambient>
+                    <diffuse>1 0.5 1 1</diffuse>
+                    <specular>1 1 1 1</specular>
+                </material>
+            </visual>
+            <sensor name="${prefix}" type="rgbd_camera">
+                <camera>
+                    <horizontal_fov>${rgbd_horizontal_fov}</horizontal_fov>
+                    <image>
+                        <width>${rgbd_width}</width>
+                        <height>${rgbd_height}</height>
+                    </image>
+                    <clip>
+                        <near>${rgbd_near}</near>
+                        <far>${rgbd_far}</far>
+                    </clip>
+                </camera>
+                <always_on>1</always_on>
+                <update_rate>${rgbd_fps}</update_rate>
+                <visualize>true</visualize>
+                <topic>${topic_prefix}</topic>
+                <!--
+                <gz_frame_id>${ignition_frame_id}</gz_frame_id>
+                -->
+            </sensor>
+        </gazebo>
+
+    </xacro:macro>
+</robot>

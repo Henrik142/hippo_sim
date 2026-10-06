@@ -55,13 +55,11 @@ def create_spawn_pool_action() -> Node:
     pool_path = package_path / 'models/pool/urdf/pool.xacro'
     pool_description = LaunchConfiguration(
         'pool_description',
-        default=Command(
-            [
-                'ros2 run hippo_sim create_robot_description.py ',
-                '--input ',
-                str(pool_path),
-            ]
-        ),
+        default=Command([
+            'ros2 run hippo_sim create_robot_description.py ',
+            '--input ',
+            str(pool_path),
+        ]),
     )
     pool_params = {'pool_description': pool_description}
     return Node(
@@ -98,7 +96,7 @@ def generate_launch_description():
     launch_description = LaunchDescription()
     declare_launch_args(launch_description=launch_description)
     actions = [
-        create_spawn_pool_action(),
+        #create_spawn_pool_action(),
         create_clock_bridge_action(),
         create_gazebo_action(),
         create_gazebo_gui_action(),
