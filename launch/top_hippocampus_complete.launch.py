@@ -22,6 +22,12 @@ def declare_args(launch_description: LaunchDescription) -> None:
         'algorithms.',
     )
     launch_description.add_action(action)
+    action = DeclareLaunchArgument(
+        'use_frontier_test_scene',
+        default_value='false',
+        description='Use the frontier test world instead of spawning a pool.',
+    )
+    launch_description.add_action(action)
 
 
 def generate_launch_description() -> LaunchDescription:
@@ -35,7 +41,14 @@ def generate_launch_description() -> LaunchDescription:
     ############################################################################
     path = str(package_path / 'launch/start_gazebo.launch.py')
     source = PythonLaunchDescriptionSource(path)
-    action = IncludeLaunchDescription(source)
+    action = IncludeLaunchDescription(
+        source,
+        launch_arguments={
+            'use_frontier_test_scene': LaunchConfiguration(
+                'use_frontier_test_scene'
+            )
+        }.items(),
+    )
     launch_description.add_action(action)
 
     ############################################################################

@@ -1,0 +1,701 @@
+<?xml version="1.0"?>
+<sdf version="1.7">
+    <world name="hippo_world">
+
+        <physics name="1ms" type="ode">
+            <max_step_size>0.004</max_step_size>
+            <real_time_factor>1.0</real_time_factor>
+        </physics>
+
+        <!-- required for camera sensor -->
+        <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+
+        <gui fullscreen="0">
+
+            <plugin filename="MinimalScene" name="3D View">
+                <gz-gui>
+                    <title>3D View</title>
+                    <property type="bool" key="showTitleBar">false</property>
+                    <property type="string" key="state">docked</property>
+                </gz-gui>
+                <engine>ogre2</engine>
+                <scene>scene</scene>
+                <ambient_light>1.0 1.0 1.0</ambient_light>
+                <background_color>1.0 1.0 1.0</background_color>
+                <camera_pose>8.3 7 7.8 0 0.5 -2.4</camera_pose>
+                <camera_clip>
+                    <near>0.01</near>
+                    <far>100</far>
+                </camera_clip>
+                <horizontal_fov>60</horizontal_fov>
+            </plugin>
+            <plugin filename="EntityContextMenuPlugin" name="Entity context menu">
+                <gz-gui>
+                    <property key="state" type="string">floating</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+            <plugin filename="GzSceneManager" name="Scene Manager">
+                <gz-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+            <plugin filename="InteractiveViewControl" name="Interactive view control">
+                <gz-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+            <plugin filename="CameraTracking" name="Camera Tracking">
+                <gz-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+            <plugin filename="MarkerManager" name="Marker manager">
+                <gz-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+            <plugin filename="SelectEntities" name="Select Entities">
+                <gz-gui>
+                    <anchors target="Select entities">
+                        <line own="right" target="right" />
+                        <line own="top" target="top" />
+                    </anchors>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+            <plugin filename="VisualizationCapabilities" name="Visualization Capabilities">
+                <gz-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+
+            <plugin filename="Spawn" name="Spawn Entities">
+                <gz-gui>
+                    <anchors target="Select entities">
+                        <line own="right" target="right" />
+                        <line own="top" target="top" />
+                    </anchors>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+
+            <!-- World control -->
+            <plugin filename="WorldControl" name="World control">
+                <gz-gui>
+                    <title>World control</title>
+                    <property type="bool" key="showTitleBar">false</property>
+                    <property type="bool" key="resizable">false</property>
+                    <property type="double" key="height">72</property>
+                    <property type="double" key="width">121</property>
+                    <property type="double" key="z">1</property>
+
+                    <property type="string" key="state">floating</property>
+                    <anchors target="3D View">
+                        <line own="left" target="left" />
+                        <line own="bottom" target="bottom" />
+                    </anchors>
+                </gz-gui>
+
+                <play_pause>true</play_pause>
+                <step>true</step>
+                <start_paused>true</start_paused>
+                <use_event>true</use_event>
+
+            </plugin>
+
+            <!-- World statistics -->
+            <plugin filename="WorldStats" name="World stats">
+                <gz-gui>
+                    <title>World stats</title>
+                    <property type="bool" key="showTitleBar">false</property>
+                    <property type="bool" key="resizable">false</property>
+                    <property type="double" key="height">110</property>
+                    <property type="double" key="width">290</property>
+                    <property type="double" key="z">1</property>
+
+                    <property type="string" key="state">floating</property>
+                    <anchors target="3D View">
+                        <line own="right" target="right" />
+                        <line own="bottom" target="bottom" />
+                    </anchors>
+                </gz-gui>
+
+                <sim_time>true</sim_time>
+                <real_time>true</real_time>
+                <real_time_factor>true</real_time_factor>
+                <iterations>true</iterations>
+            </plugin>
+            <!-- Translate / rotate -->
+            <plugin filename="TransformControl" name="Transform control">
+                <gz-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="x" type="double">0</property>
+                    <property key="y" type="double">0</property>
+                    <property key="width" type="double">250</property>
+                    <property key="height" type="double">50</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                    <property key="cardBackground" type="string">#777777</property>
+                </gz-gui>
+            </plugin>
+
+            <!-- Inspector -->
+            <plugin filename="ComponentInspector" name="Component inspector">
+                <gz-gui>
+                    <property type="string" key="state">docked</property>
+                </gz-gui>
+            </plugin>
+
+            <plugin filename="EntityTree" name="Entity tree">
+                <gz-gui>
+                    <property type="string" key="state">docked</property>
+                </gz-gui>
+            </plugin>
+        </gui>
+
+        <plugin filename="libgz-sim-physics-system.so" name="gz::sim::systems::Physics"></plugin>
+        <plugin filename="libgz-sim-user-commands-system.so" name="gz::sim::systems::UserCommands"></plugin>
+        <plugin filename="libgz-sim-scene-broadcaster-system.so" name="gz::sim::systems::SceneBroadcaster"></plugin>
+        <plugin filename="libgz-sim-imu-system.so" name="gz::sim::systems::Imu"></plugin>
+        <!-- FT Plugin -->
+        <plugin filename="gz-sim-forcetorque-system" name="gz::sim::systems::ForceTorque"/>
+
+        <light type="directional" name="sun1">
+            <cast_shadows>true</cast_shadows>
+            <pose>0 0 10 0 0 0</pose>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>1 1 1 1</specular>
+            <ambient>1 1 1 1</ambient>
+            <attenuation>
+                <range>1000</range>
+                <constant>0.9</constant>
+                <linear>0.01</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+            <direction>0.5 0.5 -0.9</direction>
+        </light>
+
+        <light type="directional" name="sun2">
+            <cast_shadows>true</cast_shadows>
+            <pose>0 0 10 0 0 0</pose>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>1 1 1 1</specular>
+            <ambient>1 1 1 1</ambient>
+            <attenuation>
+                <range>1000</range>
+                <constant>0.9</constant>
+                <linear>0.01</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+            <direction>-0.5 0.5 -0.9</direction>
+        </light>
+
+        <light type="directional" name="sun3">
+            <cast_shadows>true</cast_shadows>
+            <pose>0 0 10 0 0 0</pose>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>1 1 1 1</specular>
+            <ambient>1 1 1 1</ambient>
+            <attenuation>
+                <range>1000</range>
+                <constant>0.9</constant>
+                <linear>0.01</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+            <direction>0.5 0.1 0.9</direction>
+        </light>
+
+        <!-- Test obstacles -->
+
+
+
+        <model name="box_obstacle_1">
+            <static>true</static>
+            <pose>0.961475 0.30113 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.560695 0.429589 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.560695 0.429589 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box_obstacle_2">
+            <static>true</static>
+            <pose>0.853529 0.393447 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.588377 0.702077 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.588377 0.702077 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box_obstacle_3">
+            <static>true</static>
+            <pose>0.405571 -1.90769 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.127775 0.2756 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.127775 0.2756 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box_obstacle_4">
+            <static>true</static>
+            <pose>2.07967 -0.81465 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.31615 0.382905 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.31615 0.382905 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box_obstacle_5">
+            <static>true</static>
+            <pose>0.777908 -0.773626 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.208989 0.964838 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.208989 0.964838 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box_obstacle_6">
+            <static>true</static>
+            <pose>-1.88758 -0.979398 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.578973 0.114956 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.578973 0.114956 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box_obstacle_7">
+            <static>true</static>
+            <pose>-0.420024 2.14131 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.360235 0.714887 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.360235 0.714887 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box_obstacle_8">
+            <static>true</static>
+            <pose>0.213532 0.780731 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.70181 0.764958 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.70181 0.764958 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box_obstacle_9">
+            <static>true</static>
+            <pose>1.95879 1.62755 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.765324 0.618862 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.765324 0.618862 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box_obstacle_10">
+            <static>true</static>
+            <pose>-0.0487533 -0.851019 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.278076 0.257868 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.278076 0.257868 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="cylinder_obstacle_1">
+            <static>true</static>
+            <pose>1.81849 1.73379 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><cylinder><radius>0.27484</radius><length>2</length></cylinder></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><cylinder><radius>0.27484</radius><length>2</length></cylinder></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="cylinder_obstacle_2">
+            <static>true</static>
+            <pose>1.256 -1.38018 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><cylinder><radius>0.0934505</radius><length>2</length></cylinder></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><cylinder><radius>0.0934505</radius><length>2</length></cylinder></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="cylinder_obstacle_3">
+            <static>true</static>
+            <pose>0.597127 -0.106478 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><cylinder><radius>0.264558</radius><length>2</length></cylinder></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><cylinder><radius>0.264558</radius><length>2</length></cylinder></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="cylinder_obstacle_4">
+            <static>true</static>
+            <pose>1.7138 -0.972877 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><cylinder><radius>0.164655</radius><length>2</length></cylinder></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><cylinder><radius>0.164655</radius><length>2</length></cylinder></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="cylinder_obstacle_5">
+            <static>true</static>
+            <pose>0.193593 2.02016 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><cylinder><radius>0.319405</radius><length>2</length></cylinder></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><cylinder><radius>0.319405</radius><length>2</length></cylinder></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="wall_1">
+            <static>true</static>
+            <pose>-2.45 0 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.1 5 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.1 5 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="wall_2">
+            <static>true</static>
+            <pose>0 -2.45 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>5 0.1 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>5 0.1 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="wall_3">
+            <static>true</static>
+            <pose>2.45 0 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>0.1 5 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>0.1 5 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="wall_4">
+            <static>true</static>
+            <pose>0 2.45 -0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry><box><size>5 0.1 2</size></box></geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry><box><size>5 0.1 2</size></box></geometry>
+                    <material>
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                        <pbr>
+                            <metal>
+                                <metalness>1</metalness>
+                                <roughness>0.5</roughness>
+                            </metal>
+                        </pbr>
+                    </material>
+                </visual>
+            </link>
+        </model>
+    </world>
+</sdf>
