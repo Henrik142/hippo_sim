@@ -107,6 +107,7 @@ install(
 install(PROGRAMS
   scripts/create_robot_description.py
   scripts/generate_frontier_test_scene.py
+  scripts/spawn_box.py
   scripts/generate_tag_poses.py
   scripts/generate_pool.py
   DESTINATION lib/${PROJECT_NAME}

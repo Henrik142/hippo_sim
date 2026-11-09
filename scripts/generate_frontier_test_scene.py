@@ -5,8 +5,8 @@ from pathlib import Path
 
 from ament_index_python.packages import get_package_share_path
 
-world_x = 5.0
-world_y = 5.0
+world_x = 9.0
+world_y = 9.0
 wall_thickness = 0.1
 
 num_boxes = 10
@@ -16,6 +16,10 @@ max_sidelength = 1.0
 num_cylinders = 5
 min_diameter = min_sidelength
 max_diameter = max_sidelength
+
+maze_num_rows = 9
+maze_num_cols = 9
+maze_occupancy_prob = 0.3
 
 
 def format_number(value):
@@ -29,6 +33,14 @@ def get_scene_path():
         return source_scene_path
     return (get_package_share_path('hippo_sim') /
             'models/world/frontier_test_scene.sdf')
+
+def get_mod_scene_path():
+    source_scene_path = (Path(__file__).resolve().parents[1] /
+                         'models/world/frontier_test_scene_mod.sdf')
+    if source_scene_path.is_file():
+        return source_scene_path
+    return (get_package_share_path('hippo_sim') /
+            'models/world/frontier_test_scene_mod.sdf')
 
 
 def update_wall(scene, name, x, y, size_x, size_y):
@@ -74,10 +86,20 @@ def update_wall(scene, name, x, y, size_x, size_y):
 
 def remove_existing_obstacles(scene):
     obstacle_pattern = re.compile(
-        r'\s*<model name="(?:box|cylinder)_obstacle_[^"]+">.*?</model>',
+        r'\s*<model name=\'obstacle_[^\']+\'>.*?</model>',
         re.DOTALL,
     )
     return obstacle_pattern.sub('', scene)
+
+def copy_obstacles(scene, scene_from):
+    obstacle_pattern = re.compile(
+        r'\s*<model name=\'obstacle_[^\']+\'>.*?</model>',
+        re.DOTALL,
+    )
+    obstacles = obstacle_pattern.findall(scene_from)
+    for obstacle in obstacles:
+        scene = scene.replace('</world>', f'{obstacle}\n</world>')
+    return scene
 
 
 def wall_vertical_dimensions(scene):
@@ -114,7 +136,7 @@ def obstacle_model(name, shape, x, y, z, height, size_x, size_y=None):
                     f'<length>{format_number(height)}</length>'
                     '</cylinder>')
 
-    return f'''        <model name="{name}">
+    return f'''        <model name=\'{name}\'>
             <static>true</static>
             <pose>{pose}</pose>
             <link name="link">
@@ -150,7 +172,7 @@ def generate_obstacles(scene):
         y = random.uniform(-world_y / 2 + size_y / 2, world_y / 2 - size_y / 2)
         obstacles.append(
             obstacle_model(
-                f'box_obstacle_{index + 1}',
+                f'obstacle_box_{index + 1}',
                 'box',
                 x,
                 y,
@@ -167,7 +189,7 @@ def generate_obstacles(scene):
         y = random.uniform(-world_y / 2 + radius, world_y / 2 - radius)
         obstacles.append(
             obstacle_model(
-                f'cylinder_obstacle_{index + 1}',
+                f'obstacle_cylinder_{index + 1}',
                 'cylinder',
                 x,
                 y,
@@ -183,7 +205,81 @@ def generate_obstacles(scene):
     return scene.replace(wall_marker, obstacle_block + wall_marker, 1)
 
 
-def main():
+def generate_maze(scene):
+    z, height = wall_vertical_dimensions(scene)
+    obstacles = []
+
+    row_cell = world_x / maze_num_rows
+    col_cell = world_y / maze_num_cols
+
+    origin_x = -world_x / 2
+    origin_y = -world_y / 2
+
+    box_index = 1
+
+    for row_index in range(0, maze_num_rows):
+        for col_index in range(1, maze_num_cols):
+            if random.random() > maze_occupancy_prob:
+                continue
+
+            size_x = world_x / maze_num_rows
+            size_y = wall_thickness
+
+            if row_index < maze_num_rows - 1:
+                size_x += wall_thickness
+
+            x = origin_x + row_index * row_cell + size_x / 2
+            y = origin_y + col_index * col_cell + size_y / 2
+
+            obstacles.append(
+                obstacle_model(
+                    f'obstacle_maze_{box_index}',
+                    'box',
+                    x,
+                    y,
+                    z,
+                    height,
+                    size_x,
+                    size_y,
+                ))
+
+            box_index += 1
+
+    for row_index in range(1, maze_num_rows):
+        for col_index in range(0, maze_num_cols):
+            if random.random() > maze_occupancy_prob:
+                continue
+
+            size_x = wall_thickness
+            size_y = world_y / maze_num_cols
+
+            if col_index < maze_num_cols - 1:
+                size_y += wall_thickness
+
+            x = origin_x + row_index * row_cell + size_x / 2
+            y = origin_y + col_index * col_cell + size_y / 2
+
+            obstacles.append(
+                obstacle_model(
+                    f'obstacle_maze_{box_index}',
+                    'box',
+                    x,
+                    y,
+                    z,
+                    height,
+                    size_x,
+                    size_y,
+                ))
+
+            box_index += 1
+
+    obstacle_block = '\n\n' + '\n\n'.join(obstacles) + '\n\n'
+    wall_marker = '        <model name="wall_1">'
+    if wall_marker not in scene:
+        raise ValueError('Could not find model [wall_1] in scene file')
+    return scene.replace(wall_marker, obstacle_block + wall_marker, 1)
+
+def generate_new_scene():
     if world_x <= 0 or world_y <= 0:
         raise ValueError('world_x and world_y must be positive')
     if wall_thickness <= 0 or wall_thickness >= min(world_x, world_y):
@@ -214,9 +310,28 @@ def main():
     for name, x, y, size_x, size_y in walls:
         scene = update_wall(scene, name, x, y, size_x, size_y)
 
-    scene = generate_obstacles(scene)
+    # scene = generate_obstacles(scene)
+    scene = generate_maze(scene)
     scene_path.write_text(scene)
     print(f'Updated wall layout in [{scene_path}]')
+
+def save_scene():
+    scene_path = get_scene_path()
+    scene = scene_path.read_text()
+    scene = remove_existing_obstacles(scene)
+
+    scene_mod_path = get_mod_scene_path()
+    scene_mod = scene_mod_path.read_text()
+
+    scene = copy_obstacles(scene, scene_mod)
+    scene_path.write_text(scene)
+    
+    print(f'Copied obstacles from [{scene_mod_path}] to [{scene_path}]')
+
+
+def main():
+    generate_new_scene()
+    # save_scene()
 
 
 if __name__ == '__main__':
